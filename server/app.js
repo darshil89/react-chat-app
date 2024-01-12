@@ -21,12 +21,17 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("user connected", socket.id);
-  // socket.emit("welcome", `Welcome to the server `);
-  // socket.broadcast.emit("welcome", `${socket.id} joined the server`);
+  socket.emit("welcome", `Welcome to the server `);
+  socket.broadcast.emit("welcome", `${socket.id} joined the server`);
 
   socket.on("message", (data) => {
     console.log(data);
     socket.to(data.room).emit("received", data.message);
+  });
+
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+    console.log(`user ${socket.io} joined ${room}`);
   });
 });
 

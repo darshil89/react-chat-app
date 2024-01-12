@@ -9,11 +9,18 @@ function App() {
   const [room, setRoom] = useState("");
   const [socketId, setSocketId] = useState("");
   const [messages, setMessages] = useState([]);
+  const [roomName, setRoomName] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     socket.emit("message", { message, room });
     setMessage("");
+  };
+
+  const joinRoomHandler = (e) => {
+    e.preventDefault();
+    socket.emit("joinRoom", roomName);
+    setRoomName("");
   };
 
   useEffect(() => {
@@ -36,14 +43,18 @@ function App() {
       <h2>Chat App</h2>
 
       {messages.map((message, index) => {
-        return (
-          <div key={index}>
-            {message}
-          </div>
-        );
+        return <div key={index}>{message}</div>;
       })}
       <div>{socketId}</div>
-      <div></div>
+      <form onSubmit={joinRoomHandler}>
+        <input
+          type="text"
+          value={roomName}
+          onChange={(e) => setRoomName(e.target.value)}
+          placeholder="Room Name"
+        />
+        <button type="submit">Send</button>
+      </form>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -52,7 +63,7 @@ function App() {
           placeholder="Message"
         />
         <input
-          type="room"
+          type="text"
           value={room}
           onChange={(e) => setRoom(e.target.value)}
           placeholder="Room"
